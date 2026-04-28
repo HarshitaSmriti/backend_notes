@@ -1,0 +1,30 @@
+When we start working on our backend we start working on some specific folders let's clarify which folder is used for what:
+
+1. server.js:
+This is the main file where server starts, It makes : Express app, registers middleware, connects routes and starts server(app.listen()). This basically boots the whole backend, and is also the main entry file where Node starts execution
+2. config/
+This is the file that defines the system configuration, It's used to:Avoid clustering in main file, and to manage how system connects to external services.
+3. routes/
+Defines API endpoints, It makes: Clean API structure, makes our application scalable, also seprates routing from logic.
+It has routes like:
+POST/ai/explain
+GET/email/history
+4. controllers/
+It handles request and response, It: reads req, calls service, sends req like a Manager between client and logic
+5. services/
+Contains actual logic(brain), It's used for: Reusability of same logic by many APIs, Clean architectures, Easier testing and easier modification 
+It contains: AI calls, DB operations, logic processing, decision-making, transformations.
+Controller calls service: service processes input -> calls DB/AI -> returns result
+6. models/
+It defines the structure of data. It's used to ensure that DB is flexible and Ensure consistent data format.
+It contains: Schemas(structure of data)
+It's used by mongoose to: validate data and interact with DB
+7. middleware/
+These are functions that run before controller and is used to Handles autentication,validation, logging and rate limiting.
+8. utils/
+These are reusable helper functions. Used to avoid duplications and keep services clean it contains: small utilities like: format response, string processing, and common helpers.
+Utils is like a toolbox.
+9. constants/
+These are static/fixed values. Used to Avoid hardcoding, Easy updates and consistency across projects.
+It contains: AI prompts, config values, enums.
+
