@@ -1,0 +1,114 @@
+We already did our basic server now let's rebuild it properly with a good structure.
+
+With this our goal is to build:
+When a user hits your API:
+Client -> server.js -> routes/routes.js -> controllers/controller.js -> services/service.js
+
+Let's first understand why we are using multiple files here:
+If everything was in just server.js it could get messy, hard to handle and even harder to scale, SO we spill into: routes -> where request comes , controllers -> how request is handled.
+
+The process of deciding which functions runs for which URL is called Routing.
+We use Routing System:
+To handle multiple APIs need.
+Manage the functionality of each API when it does different work.
+Example:
+POST /ai/explain → explain code
+POST /ai/optimize → optimize code
+
+1) Talking about Routes let's understand it's creation:
+The routes are creates as routes/ai.routes.js
+Where:
+It defines API endpoints.
+Connects them to controller.
+
+The code:
+const express = require("express");
+const router = express.Router();
+const { explainCode } = require("../controllers/ai.controller");
+router.post("/explain", explainCode);
+module.exports = router;
+
+Where:
+1.express.Router => creates a mini router to modular routing and seprate route files.
+2.router.post => Handles POST request
+3.require("../controllers/...") => Imports controller
+4.module.exports router; => Exports router for server to use.
+
+2)  Understanding Controller:
+It's created as: controllers/ai.controllers.js
+
+The code:
+
+const explainCode = (req, res) => {
+  res.send("Explain Code API Hit");
+};
+module.exports = { explainCode };
+
+Where:
+1.req: represents everything the client sends to the server.
+2.res: Represents what the server sends back to the client.
+3.module.exports: Makes the function usable in other files.
+
+3) Connecting Route to Server:
+
+In server.js we add:
+const express = require("express");
+const app = express();
+const aiRoutes = require("./routes/ai.routes");
+app.use("/ai", aiRoutes);
+app.listen(3000, () => {
+  console.log("Server running");
+});
+
+WHERE:
+app.use("/ai", aiRoutes); => prefixes all routes with /ai
+So  it becomes POST/ai/explain like in Postman http://localhost:3000/ai/explain.
+
+Routes for HTTP GET request: A Get request is a request used to retrieve data.
+app.get(): defines the routes for HTTP GET requests.
+When someone sends a GET request to /path, run this function.
+
+Example:
+app.get("/", (req, res) => {
+  res.send("Hello");
+});
+
+Where: Server opens /, server runs function, sends "Hello" back.
+
+for POST request:
+POST is a HTTP method used to send data from client -> server.
+It's used to: create something, send input and process data.
+
+Code:
+app.post("/users", (req, res) => {
+  console.log(req.body);
+  res.send("User created");
+});
+
+Request Flow (Important)
+
+Client → server.js → routes → controller → response
+
+Step-by-step:
+1. Client sends request
+2. server.js receives it
+3. Route matches URL
+4. Controller function runs
+5. Response is sent back.
+
+Understanding express.json() :
+To access data sent in POST request:
+
+app.use(express.json());
+We use it to:
+-Convert incoming JSON data into JavaScript object.
+-Make data available in req.body.
+
+GET v/s POST:
+GET:
+- Used to fetch data
+- Data sent in URL
+
+POST:
+- Used to send data
+- Data sent in body
